@@ -28,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.home.HomeScreen
 
 enum class ClimateQuestDestination(
     val route: String,
@@ -74,9 +75,10 @@ fun ClimateQuestApp() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(ClimateQuestDestination.Home.route) {
-                NavigationPlaceholderScreen(
-                    title = "ClimateQuest",
-                    description = "Learn to read weather evidence, explain uncertainty, and make thoughtful decisions."
+                HomeScreen(
+                    onStartMission = {
+                        navController.navigateToTopLevel(ClimateQuestDestination.Missions)
+                    }
                 )
             }
             composable(ClimateQuestDestination.Missions.route) {
