@@ -13,8 +13,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Tune
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -24,12 +24,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.ui.theme.CP3406_A3EducationalApp_YuvrajDave_14883609Theme
 
 @Composable
 fun SettingsScreen(
+    selectedCity: String?,
+    onChooseCity: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -85,16 +88,55 @@ fun SettingsScreen(
             }
         }
 
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "City choice",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+
+                Text(
+                    text = selectedCity?.let { "Current city: $it" }
+                        ?: "No city chosen yet",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+
+                Text(
+                    text = "You choose cities yourself. ClimateQuest does not use GPS.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+
+                Button(
+                    onClick = onChooseCity,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("choose_city_button")
+                ) {
+                    Text(
+                        text = if (selectedCity == null) {
+                            "Choose a city"
+                        } else {
+                            "Change city"
+                        }
+                    )
+                }
+            }
+        }
+
         Text(
             text = "Your learning controls",
             style = MaterialTheme.typography.titleLarge
-        )
-
-        LearnerControlCard(
-            icon = Icons.Outlined.LocationOn,
-            title = "Choose your city",
-            description = "Search for a city yourself. You will be able to change or remove it whenever you want.",
-            status = "Manual city choice is coming next."
         )
 
         LearnerControlCard(
@@ -190,6 +232,9 @@ private fun LearnerControlCard(
 @Composable
 private fun SettingsScreenPreview() {
     CP3406_A3EducationalApp_YuvrajDave_14883609Theme {
-        SettingsScreen()
+        SettingsScreen(
+            selectedCity = null,
+            onChooseCity = {}
+        )
     }
 }

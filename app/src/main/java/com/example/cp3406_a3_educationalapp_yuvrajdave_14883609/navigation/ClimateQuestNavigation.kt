@@ -19,6 +19,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
@@ -30,7 +33,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.home.HomeScreen
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.CitySelectionScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.SettingsScreen
+
+private const val CITY_SELECTION_ROUTE = "city_selection"
 
 enum class ClimateQuestDestination(
     val route: String,
@@ -46,6 +52,8 @@ enum class ClimateQuestDestination(
 @Composable
 fun ClimateQuestApp() {
     val navController = rememberNavController()
+    var selectedCity by rememberSaveable { mutableStateOf<String?>(null) }
+
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
@@ -53,8 +61,14 @@ fun ClimateQuestApp() {
         bottomBar = {
             NavigationBar {
                 ClimateQuestDestination.entries.forEach { destination ->
+                    val isSelected = currentRoute == destination.route ||
+                            (
+                                    destination == ClimateQuestDestination.Settings &&
+                                            currentRoute == CITY_SELECTION_ROUTE
+                                    )
+
                     NavigationBarItem(
-                        selected = currentRoute == destination.route,
+                        selected = isSelected,
                         onClick = {
                             navController.navigateToTopLevel(destination)
                         },
@@ -80,24 +94,47 @@ fun ClimateQuestApp() {
             composable(ClimateQuestDestination.Home.route) {
                 HomeScreen(
                     onStartMission = {
-                        navController.navigateToTopLevel(ClimateQuestDestination.Missions)
+                        navController.navigateToTopLevel(
+                            ClimateQuestDestination.Missions
+                        )
                     }
                 )
             }
+
             composable(ClimateQuestDestination.Missions.route) {
                 NavigationPlaceholderScreen(
                     title = "Missions",
                     description = "Short learning missions will help you practise interpreting forecast evidence."
                 )
             }
+
             composable(ClimateQuestDestination.Progress.route) {
                 NavigationPlaceholderScreen(
                     title = "Progress",
                     description = "Your completed missions and learning growth will appear here."
                 )
             }
+
             composable(ClimateQuestDestination.Settings.route) {
-                SettingsScreen()
+                SettingsScreen(
+                    selectedCity = selectedCity,
+                    onChooseCity = {
+                        navController.navigate(CITY_SELECTION_ROUTE)
+                    }
+                )
+            }
+
+            composable(CITY_SELECTION_ROUTE) {
+                CitySelectionScreen(
+                    selectedCity = selectedCity,
+                    onCitySelected = { city ->
+                        selectedCity = city
+                        navController.popBackStack()
+                    },
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
+                )
             }
         }
     }
@@ -118,10 +155,12 @@ private fun NavigationPlaceholderScreen(
             text = title,
             style = MaterialTheme.typography.headlineLarge
         )
+
         Text(
             text = description,
             style = MaterialTheme.typography.bodyLarge
         )
+
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -136,6 +175,7 @@ private fun NavigationPlaceholderScreen(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
+
                 Text(
                     text = "This screen will be developed in the next focused feature commits.",
                     style = MaterialTheme.typography.bodyMedium,
