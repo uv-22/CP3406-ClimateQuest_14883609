@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "CP3406_A3 - Educational App_YuvrajDave_14883609"
+rootProject.name = "ClimateQuest"
 include(":app")
  

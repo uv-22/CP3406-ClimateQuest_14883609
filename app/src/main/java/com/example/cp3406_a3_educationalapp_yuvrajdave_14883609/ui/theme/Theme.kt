@@ -1,6 +1,5 @@
 package com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
