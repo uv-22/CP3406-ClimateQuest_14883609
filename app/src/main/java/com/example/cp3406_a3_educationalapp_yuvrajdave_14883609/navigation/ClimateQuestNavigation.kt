@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -29,6 +30,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.home.HomeScreen
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.SettingsScreen
 
 enum class ClimateQuestDestination(
     val route: String,
@@ -56,6 +58,7 @@ fun ClimateQuestApp() {
                         onClick = {
                             navController.navigateToTopLevel(destination)
                         },
+                        modifier = Modifier.testTag("navigation_${destination.route}"),
                         icon = {
                             Icon(
                                 imageVector = destination.icon,
@@ -94,10 +97,7 @@ fun ClimateQuestApp() {
                 )
             }
             composable(ClimateQuestDestination.Settings.route) {
-                NavigationPlaceholderScreen(
-                    title = "Settings",
-                    description = "You will control cities, preferences, and locally stored learning data here."
-                )
+                SettingsScreen()
             }
         }
     }
