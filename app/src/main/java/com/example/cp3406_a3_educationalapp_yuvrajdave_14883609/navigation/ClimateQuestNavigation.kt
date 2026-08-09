@@ -32,6 +32,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.home.HomeScreen
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.MissionsScreen
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.MissionsViewModel
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.CitySelectionScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.CitySettingsViewModel
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.SettingsScreen
@@ -51,10 +53,12 @@ enum class ClimateQuestDestination(
 
 @Composable
 fun ClimateQuestApp(
-    citySettingsViewModel: CitySettingsViewModel = viewModel()
+    citySettingsViewModel: CitySettingsViewModel = viewModel(),
+    missionsViewModel: MissionsViewModel = viewModel()
 ) {
     val navController = rememberNavController()
     val selectedCity by citySettingsViewModel.selectedCity.collectAsStateWithLifecycle()
+    val missions by missionsViewModel.missions.collectAsStateWithLifecycle()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -104,10 +108,7 @@ fun ClimateQuestApp(
             }
 
             composable(ClimateQuestDestination.Missions.route) {
-                NavigationPlaceholderScreen(
-                    title = "Missions",
-                    description = "Short learning missions will help you practise interpreting forecast evidence."
-                )
+                MissionsScreen(missions = missions)
             }
 
             composable(ClimateQuestDestination.Progress.route) {
