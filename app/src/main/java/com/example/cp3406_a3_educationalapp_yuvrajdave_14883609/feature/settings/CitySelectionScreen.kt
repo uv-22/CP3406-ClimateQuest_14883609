@@ -18,7 +18,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.ui.theme.CP3406_A3EducationalApp_YuvrajDave_14883609Theme
-
 private data class CityOption(
     val name: String,
     val region: String,
@@ -77,6 +76,7 @@ fun CitySelectionScreen(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
+
                 Text(
                     text = "Your city choice is saved only on this device. You can change it any time in Settings.",
                     style = MaterialTheme.typography.bodyMedium,
@@ -107,13 +107,15 @@ fun CitySelectionScreen(
                         text = city.name,
                         style = MaterialTheme.typography.titleMedium
                     )
+
                     Text(
                         text = city.region,
                         style = MaterialTheme.typography.bodyMedium
                     )
+
                     if (city.name == selectedCity) {
                         Text(
-                            text = "Selected for this session",
+                            text = "Saved on this device",
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.primary
                         )
