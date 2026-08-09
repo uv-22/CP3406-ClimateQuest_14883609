@@ -6,6 +6,7 @@ import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.data.progress.Cl
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.data.progress.MissionAttemptDao
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.data.progress.MissionAttemptRepository
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.data.progress.RoomMissionAttemptRepository
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.data.weather.CachedWeatherSnapshotDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,6 +27,8 @@ object ProgressDatabaseModule {
             context,
             ClimateQuestDatabase::class.java,
             "climatequest_database"
+        ).addMigrations(
+            ClimateQuestDatabase.MIGRATION_1_2
         ).build()
     }
 
@@ -34,6 +37,13 @@ object ProgressDatabaseModule {
         database: ClimateQuestDatabase
     ): MissionAttemptDao {
         return database.missionAttemptDao()
+    }
+
+    @Provides
+    fun provideCachedWeatherSnapshotDao(
+        database: ClimateQuestDatabase
+    ): CachedWeatherSnapshotDao {
+        return database.cachedWeatherSnapshotDao()
     }
 
     @Provides

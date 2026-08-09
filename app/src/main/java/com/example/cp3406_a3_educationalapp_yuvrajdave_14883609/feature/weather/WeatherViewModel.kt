@@ -60,6 +60,18 @@ class WeatherViewModel @Inject constructor(
         }
     }
 
+    fun clearCachedWeather() {
+        viewModelScope.launch {
+            try {
+                weatherRepository.clearCachedWeather()
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (_: Exception) {
+                // Clearing local cache must not crash the app.
+            }
+        }
+    }
+
     private fun loadWeather(city: String) {
         val requestVersion = ++weatherRequestVersion
 
@@ -80,8 +92,18 @@ class WeatherViewModel @Inject constructor(
             } catch (exception: CancellationException) {
                 throw exception
             } catch (_: Exception) {
+                val cachedWeatherSnapshot = try {
+                    weatherRepository.loadCachedWeather(city)
+                } catch (cacheException: CancellationException) {
+                    throw cacheException
+                } catch (_: Exception) {
+                    null
+                }
+
                 if (selectedCity == city && requestVersion == weatherRequestVersion) {
-                    _weatherUiState.value = WeatherUiState.Error(city)
+                    _weatherUiState.value = cachedWeatherSnapshot?.let {
+                        WeatherUiState.Success(it)
+                    } ?: WeatherUiState.Error(city)
                 }
             }
         }

@@ -213,7 +213,10 @@ fun ClimateQuestApp(
                         navController.navigate(CITY_SELECTION_ROUTE)
                     },
                     onClearCity = citySettingsViewModel::clearSelectedCity,
-                    onClearProgress = missionAttemptsViewModel::clearLearningProgress
+                    onClearProgress = {
+                        missionAttemptsViewModel.clearLearningProgress()
+                        weatherViewModel.clearCachedWeather()
+                    }
                 )
             }
 

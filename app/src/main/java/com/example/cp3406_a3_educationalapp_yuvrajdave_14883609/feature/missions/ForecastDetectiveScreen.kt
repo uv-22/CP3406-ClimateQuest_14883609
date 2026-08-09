@@ -22,8 +22,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.data.weather.WeatherSnapshot
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.weather.WeatherUiState
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.ui.theme.CP3406_A3EducationalApp_YuvrajDave_14883609Theme
+import java.text.DateFormat
+import java.util.Date
 import kotlin.math.roundToInt
 
 private data class PlanOption(
@@ -284,6 +287,12 @@ private fun LiveWeatherCard(
                     }
 
                     Text(
+                        text = weatherUpdateMessage(snapshot),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+
+                    Text(
                         text = "Source: Open-Meteo forecast model data. The rain value is the highest chance for today; conditions can change.",
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -307,6 +316,22 @@ private fun LiveWeatherCard(
                 }
             }
         }
+    }
+}
+
+private fun weatherUpdateMessage(snapshot: WeatherSnapshot): String {
+    val time = snapshot.fetchedAtEpochMillis
+        .takeIf { it > 0L }
+        ?.let { DateFormat.getTimeInstance(DateFormat.SHORT).format(Date(it)) }
+
+    return if (snapshot.isCached) {
+        time?.let {
+            "Saved conditions from $it. Connect to refresh."
+        } ?: "Saved conditions from this device. Connect to refresh."
+    } else {
+        time?.let {
+            "Updated at $it. Conditions can change."
+        } ?: "Updated just now. Conditions can change."
     }
 }
 

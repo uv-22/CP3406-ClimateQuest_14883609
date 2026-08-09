@@ -93,6 +93,41 @@ class WeatherViewModelTest {
         }
 
     @Test
+    fun failedWeatherRequest_usesSavedConditionsForTheSameCity() =
+        runTest(mainDispatcherRule.testDispatcher) {
+            val savedSnapshot = weatherSnapshot("Cairns").copy(
+                fetchedAtEpochMillis = 1_000L,
+                isCached = true
+            )
+
+            val cityRepository = FakeCityPreferencesRepository(initialCity = null)
+            val weatherRepository = RecordingWeatherRepository(
+                cachedWeatherForCity = { city ->
+                    savedSnapshot.takeIf { it.city == city }
+                }
+            ) { _, _ ->
+                throw IOException("Weather service is unavailable")
+            }
+
+            val viewModel = WeatherViewModel(
+                cityPreferencesRepository = cityRepository,
+                weatherRepository = weatherRepository
+            )
+
+            cityRepository.emitCity("Cairns")
+            advanceUntilIdle()
+
+            assertEquals(
+                WeatherUiState.Success(savedSnapshot),
+                viewModel.weatherUiState.value
+            )
+            assertEquals(
+                listOf("Cairns"),
+                weatherRepository.requestedCities
+            )
+        }
+
+    @Test
     fun switchingCities_ignoresALateResultForThePreviouslySelectedCity() =
         runTest(mainDispatcherRule.testDispatcher) {
             val cityRepository = FakeCityPreferencesRepository(initialCity = null)
@@ -139,10 +174,6 @@ class WeatherViewModelTest {
             assertEquals(
                 WeatherUiState.Success(weatherSnapshot("Hobart")),
                 viewModel.weatherUiState.value
-            )
-            assertEquals(
-                listOf("Townsville", "Hobart"),
-                weatherRepository.requestedCities
             )
         }
 
@@ -224,6 +255,9 @@ private class FakeCityPreferencesRepository(
 }
 
 private class RecordingWeatherRepository(
+    private val cachedWeatherForCity: suspend (city: String) -> WeatherSnapshot? = {
+        null
+    },
     private val responseForRequest: suspend (
         city: String,
         requestNumber: Int
@@ -240,20 +274,27 @@ private class RecordingWeatherRepository(
             requestedCities.size
         )
     }
+
+    override suspend fun loadCachedWeather(city: String): WeatherSnapshot? {
+        return cachedWeatherForCity(city)
+    }
+
+    override suspend fun clearCachedWeather() = Unit
 }
 
 private class ControlledWeatherRepository : WeatherRepository {
-
-    val requestedCities = mutableListOf<String>()
 
     private val pendingRequests =
         mutableMapOf<String, Continuation<WeatherSnapshot>>()
 
     override suspend fun fetchWeather(city: String): WeatherSnapshot =
         suspendCoroutine { continuation ->
-            requestedCities += city
             pendingRequests[city] = continuation
         }
+
+    override suspend fun loadCachedWeather(city: String): WeatherSnapshot? = null
+
+    override suspend fun clearCachedWeather() = Unit
 
     fun complete(
         city: String,

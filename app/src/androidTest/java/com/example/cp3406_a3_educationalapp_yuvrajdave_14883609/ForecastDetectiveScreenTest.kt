@@ -41,4 +41,30 @@ class ForecastDetectiveScreenTest {
             .performScrollTo()
             .assertIsDisplayed()
     }
+
+    @Test
+    fun cachedWeatherClearlyExplainsThatItWasSavedLocally() {
+        composeTestRule.setContent {
+            CP3406_A3EducationalApp_YuvrajDave_14883609Theme {
+                ForecastDetectiveScreen(
+                    weatherUiState = WeatherUiState.Success(
+                        WeatherSnapshot(
+                            city = "Townsville",
+                            temperatureCelsius = 28.0,
+                            windSpeedKilometresPerHour = 18.0,
+                            maximumRainProbabilityToday = 65,
+                            isCached = true
+                        )
+                    ),
+                    onRefreshWeather = {},
+                    onNavigateBack = {},
+                    onAttemptRecorded = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText(
+            "Saved conditions from this device. Connect to refresh."
+        ).performScrollTo().assertIsDisplayed()
+    }
 }

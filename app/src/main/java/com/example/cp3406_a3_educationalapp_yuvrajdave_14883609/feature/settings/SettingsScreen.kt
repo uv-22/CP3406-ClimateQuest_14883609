@@ -200,7 +200,7 @@ fun SettingsScreen(
                         )
 
                         Text(
-                            text = "Your mission responses and Progress statistics stay only on this device.",
+                            text = "Your mission responses, Progress statistics, and saved weather conditions stay only on this device.",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -282,7 +282,7 @@ fun SettingsScreen(
             },
             text = {
                 Text(
-                    "This permanently removes saved mission responses and Progress statistics from this device. It cannot be undone."
+                    "This permanently removes saved mission responses, Progress statistics, and saved weather conditions from this device. Your saved city is managed separately and is not removed. This cannot be undone."
                 )
             },
             confirmButton = {

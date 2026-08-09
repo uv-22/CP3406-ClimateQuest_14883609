@@ -5,15 +5,22 @@ import java.net.HttpURLConnection
 import java.net.URL
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 interface WeatherRepository {
     suspend fun fetchWeather(city: String): WeatherSnapshot
+
+    suspend fun loadCachedWeather(city: String): WeatherSnapshot?
+
+    suspend fun clearCachedWeather()
 }
 
 @Singleton
-class OpenMeteoWeatherRepository @Inject constructor() : WeatherRepository {
+class OpenMeteoWeatherRepository @Inject constructor(
+    private val cachedWeatherSnapshotDao: CachedWeatherSnapshotDao
+) : WeatherRepository {
 
     override suspend fun fetchWeather(city: String): WeatherSnapshot {
         val coordinates = cityCoordinates(city)
@@ -49,13 +56,42 @@ class OpenMeteoWeatherRepository @Inject constructor() : WeatherRepository {
                     .bufferedReader()
                     .use { reader -> reader.readText() }
 
-                WeatherResponseParser.parse(
+                val weatherSnapshot = WeatherResponseParser.parse(
                     city = city,
                     response = response
+                ).copy(
+                    fetchedAtEpochMillis = System.currentTimeMillis(),
+                    isCached = false
                 )
+
+                try {
+                    cachedWeatherSnapshotDao.save(
+                        weatherSnapshot.toCachedWeatherSnapshotEntity()
+                    )
+                } catch (exception: CancellationException) {
+                    throw exception
+                } catch (_: Exception) {
+                    // Fresh conditions remain useful even if a local cache write fails.
+                }
+
+                weatherSnapshot
             } finally {
                 connection.disconnect()
             }
+        }
+    }
+
+    override suspend fun loadCachedWeather(city: String): WeatherSnapshot? {
+        return withContext(Dispatchers.IO) {
+            cachedWeatherSnapshotDao
+                .getSnapshotForCity(city)
+                ?.toWeatherSnapshot()
+        }
+    }
+
+    override suspend fun clearCachedWeather() {
+        withContext(Dispatchers.IO) {
+            cachedWeatherSnapshotDao.deleteAllSnapshots()
         }
     }
 
