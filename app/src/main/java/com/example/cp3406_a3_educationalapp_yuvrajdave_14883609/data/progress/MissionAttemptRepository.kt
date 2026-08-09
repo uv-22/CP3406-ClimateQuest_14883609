@@ -11,6 +11,8 @@ interface MissionAttemptRepository {
         missionId: String,
         wasCorrect: Boolean
     )
+
+    suspend fun clearAllAttempts()
 }
 
 class RoomMissionAttemptRepository(
@@ -37,5 +39,9 @@ class RoomMissionAttemptRepository(
                 completedAtEpochMillis = System.currentTimeMillis()
             )
         )
+    }
+
+    override suspend fun clearAllAttempts() {
+        missionAttemptDao.deleteAllAttempts()
     }
 }

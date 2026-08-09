@@ -55,4 +55,10 @@ class MissionAttemptsViewModel @Inject constructor(
             )
         }
     }
+
+    fun clearLearningProgress() {
+        viewModelScope.launch {
+            missionAttemptRepository.clearAllAttempts()
+        }
+    }
 }

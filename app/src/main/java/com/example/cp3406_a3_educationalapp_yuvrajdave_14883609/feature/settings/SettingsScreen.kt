@@ -41,9 +41,11 @@ fun SettingsScreen(
     selectedCity: String?,
     onChooseCity: () -> Unit,
     onClearCity: () -> Unit,
+    onClearProgress: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var showRemoveCityDialog by rememberSaveable { mutableStateOf(false) }
+    var showClearProgressDialog by rememberSaveable { mutableStateOf(false) }
     val cityToRemove = selectedCity
 
     Column(
@@ -92,7 +94,7 @@ fun SettingsScreen(
                 )
 
                 Text(
-                    text = "You will choose cities manually, so your location stays yours.",
+                    text = "You choose cities manually, so your location stays yours.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -168,12 +170,53 @@ fun SettingsScreen(
             status = "Optional learning preferences are coming soon."
         )
 
-        LearnerControlCard(
-            icon = Icons.Outlined.DeleteOutline,
-            title = "Local learning data",
-            description = "Mission progress will stay on this device. You will be able to review or delete it.",
-            status = "Progress controls are coming soon."
-        )
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.DeleteOutline,
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Text(
+                            text = "Local learning data",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+
+                        Text(
+                            text = "Your mission responses and Progress statistics stay only on this device.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                OutlinedButton(
+                    onClick = { showClearProgressDialog = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("clear_progress_button")
+                ) {
+                    Text("Clear local learning data")
+                }
+            }
+        }
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -192,7 +235,7 @@ fun SettingsScreen(
                 )
 
                 Text(
-                    text = "ClimateQuest will explain what it saves for learning and how you can remove it.",
+                    text = "ClimateQuest explains what it saves for learning and how you can remove it.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
@@ -226,6 +269,37 @@ fun SettingsScreen(
                     onClick = { showRemoveCityDialog = false }
                 ) {
                     Text("Keep city")
+                }
+            }
+        )
+    }
+
+    if (showClearProgressDialog) {
+        AlertDialog(
+            onDismissRequest = { showClearProgressDialog = false },
+            title = {
+                Text("Clear local learning data?")
+            },
+            text = {
+                Text(
+                    "This permanently removes saved mission responses and Progress statistics from this device. It cannot be undone."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onClearProgress()
+                        showClearProgressDialog = false
+                    }
+                ) {
+                    Text("Clear data")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showClearProgressDialog = false }
+                ) {
+                    Text("Keep data")
                 }
             }
         )
@@ -288,7 +362,8 @@ private fun SettingsScreenPreview() {
         SettingsScreen(
             selectedCity = "Townsville",
             onChooseCity = {},
-            onClearCity = {}
+            onClearCity = {},
+            onClearProgress = {}
         )
     }
 }

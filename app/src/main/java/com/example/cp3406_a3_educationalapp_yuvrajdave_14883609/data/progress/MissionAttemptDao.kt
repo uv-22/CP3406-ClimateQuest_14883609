@@ -25,4 +25,7 @@ interface MissionAttemptDao {
                 "WHERE was_correct = 1"
     )
     fun observeCorrectAttempts(): Flow<Int>
+
+    @Query("DELETE FROM mission_attempts")
+    suspend fun deleteAllAttempts()
 }
