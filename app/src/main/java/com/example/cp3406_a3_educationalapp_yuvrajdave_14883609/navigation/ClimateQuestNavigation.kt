@@ -36,6 +36,7 @@ import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.MissionsScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.MissionsViewModel
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.progress.MissionAttemptsViewModel
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.progress.ProgressScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.CitySelectionScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.CitySettingsViewModel
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.SettingsScreen
@@ -63,6 +64,7 @@ fun ClimateQuestApp(
     val navController = rememberNavController()
     val selectedCity by citySettingsViewModel.selectedCity.collectAsStateWithLifecycle()
     val missions by missionsViewModel.missions.collectAsStateWithLifecycle()
+    val progressUiState by missionAttemptsViewModel.progressUiState.collectAsStateWithLifecycle()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -145,9 +147,13 @@ fun ClimateQuestApp(
             }
 
             composable(ClimateQuestDestination.Progress.route) {
-                NavigationPlaceholderScreen(
-                    title = "Progress",
-                    description = "Your completed missions and learning growth will appear here."
+                ProgressScreen(
+                    progressUiState = progressUiState,
+                    onStartMission = {
+                        navController.navigateToTopLevel(
+                            ClimateQuestDestination.Missions
+                        )
+                    }
                 )
             }
 
