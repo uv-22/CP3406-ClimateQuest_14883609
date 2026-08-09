@@ -105,7 +105,10 @@ private fun MissionCard(
     position: Int,
     onMissionSelected: (String) -> Unit
 ) {
-    val isAvailable = mission.id == "forecast_detective"
+    val isAvailable = mission.id in setOf(
+        "forecast_detective",
+        "weather_or_climate"
+    )
 
     Card(
         modifier = Modifier
@@ -172,11 +175,11 @@ private fun MissionsScreenPreview() {
                     estimatedMinutes = 6
                 ),
                 Mission(
-                    id = "forecast_uncertainty",
-                    title = "Forecasts are not promises",
-                    description = "Explore why a forecast can be useful even when the weather turns out differently.",
-                    skill = "Explaining uncertainty",
-                    estimatedMinutes = 5
+                    id = "weather_or_climate",
+                    title = "Weather or climate?",
+                    description = "Sort everyday weather observations from longer-term climate patterns.",
+                    skill = "Comparing time scales",
+                    estimatedMinutes = 7
                 )
             ),
             onMissionSelected = {}

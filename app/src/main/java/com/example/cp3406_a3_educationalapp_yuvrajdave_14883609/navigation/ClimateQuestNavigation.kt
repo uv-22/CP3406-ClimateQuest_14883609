@@ -35,6 +35,7 @@ import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.home.Hom
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.ForecastDetectiveScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.MissionsScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.MissionsViewModel
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.WeatherOrClimateScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.progress.MissionAttemptsViewModel
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.progress.ProgressScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.CitySelectionScreen
@@ -44,6 +45,7 @@ import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.weather.
 
 private const val CITY_SELECTION_ROUTE = "city_selection"
 private const val FORECAST_DETECTIVE_ROUTE = "forecast_detective"
+private const val WEATHER_OR_CLIMATE_ROUTE = "weather_or_climate"
 
 enum class ClimateQuestDestination(
     val route: String,
@@ -79,7 +81,8 @@ fun ClimateQuestApp(
                     val isSelected = when (destination) {
                         ClimateQuestDestination.Missions -> {
                             currentRoute == ClimateQuestDestination.Missions.route ||
-                                    currentRoute == FORECAST_DETECTIVE_ROUTE
+                                    currentRoute == FORECAST_DETECTIVE_ROUTE ||
+                                    currentRoute == WEATHER_OR_CLIMATE_ROUTE
                         }
 
                         ClimateQuestDestination.Settings -> {
@@ -128,8 +131,14 @@ fun ClimateQuestApp(
                 MissionsScreen(
                     missions = missions,
                     onMissionSelected = { missionId ->
-                        if (missionId == "forecast_detective") {
-                            navController.navigate(FORECAST_DETECTIVE_ROUTE)
+                        when (missionId) {
+                            "forecast_detective" -> {
+                                navController.navigate(FORECAST_DETECTIVE_ROUTE)
+                            }
+
+                            "weather_or_climate" -> {
+                                navController.navigate(WEATHER_OR_CLIMATE_ROUTE)
+                            }
                         }
                     }
                 )
@@ -145,6 +154,20 @@ fun ClimateQuestApp(
                     onAttemptRecorded = { wasCorrect ->
                         missionAttemptsViewModel.recordAttempt(
                             missionId = "forecast_detective",
+                            wasCorrect = wasCorrect
+                        )
+                    }
+                )
+            }
+
+            composable(WEATHER_OR_CLIMATE_ROUTE) {
+                WeatherOrClimateScreen(
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    },
+                    onAttemptRecorded = { wasCorrect ->
+                        missionAttemptsViewModel.recordAttempt(
+                            missionId = "weather_or_climate",
                             wasCorrect = wasCorrect
                         )
                     }
