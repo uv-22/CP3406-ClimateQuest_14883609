@@ -107,6 +107,7 @@ private fun MissionCard(
 ) {
     val isAvailable = mission.id in setOf(
         "forecast_detective",
+        "forecast_uncertainty",
         "weather_or_climate"
     )
 
@@ -150,12 +151,6 @@ private fun MissionCard(
                 ) {
                     Text("Start mission")
                 }
-            } else {
-                Text(
-                    text = "Available soon",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
             }
         }
     }
@@ -175,11 +170,11 @@ private fun MissionsScreenPreview() {
                     estimatedMinutes = 6
                 ),
                 Mission(
-                    id = "weather_or_climate",
-                    title = "Weather or climate?",
-                    description = "Sort everyday weather observations from longer-term climate patterns.",
-                    skill = "Comparing time scales",
-                    estimatedMinutes = 7
+                    id = "forecast_uncertainty",
+                    title = "Forecasts are not promises",
+                    description = "Explore why a forecast can be useful even when the weather turns out differently.",
+                    skill = "Explaining uncertainty",
+                    estimatedMinutes = 5
                 )
             ),
             onMissionSelected = {}

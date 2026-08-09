@@ -33,6 +33,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.home.HomeScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.ForecastDetectiveScreen
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.ForecastUncertaintyScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.MissionsScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.MissionsViewModel
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.WeatherOrClimateScreen
@@ -45,6 +46,7 @@ import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.weather.
 
 private const val CITY_SELECTION_ROUTE = "city_selection"
 private const val FORECAST_DETECTIVE_ROUTE = "forecast_detective"
+private const val FORECAST_UNCERTAINTY_ROUTE = "forecast_uncertainty"
 private const val WEATHER_OR_CLIMATE_ROUTE = "weather_or_climate"
 
 enum class ClimateQuestDestination(
@@ -82,6 +84,7 @@ fun ClimateQuestApp(
                         ClimateQuestDestination.Missions -> {
                             currentRoute == ClimateQuestDestination.Missions.route ||
                                     currentRoute == FORECAST_DETECTIVE_ROUTE ||
+                                    currentRoute == FORECAST_UNCERTAINTY_ROUTE ||
                                     currentRoute == WEATHER_OR_CLIMATE_ROUTE
                         }
 
@@ -136,6 +139,10 @@ fun ClimateQuestApp(
                                 navController.navigate(FORECAST_DETECTIVE_ROUTE)
                             }
 
+                            "forecast_uncertainty" -> {
+                                navController.navigate(FORECAST_UNCERTAINTY_ROUTE)
+                            }
+
                             "weather_or_climate" -> {
                                 navController.navigate(WEATHER_OR_CLIMATE_ROUTE)
                             }
@@ -154,6 +161,20 @@ fun ClimateQuestApp(
                     onAttemptRecorded = { wasCorrect ->
                         missionAttemptsViewModel.recordAttempt(
                             missionId = "forecast_detective",
+                            wasCorrect = wasCorrect
+                        )
+                    }
+                )
+            }
+
+            composable(FORECAST_UNCERTAINTY_ROUTE) {
+                ForecastUncertaintyScreen(
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    },
+                    onAttemptRecorded = { wasCorrect ->
+                        missionAttemptsViewModel.recordAttempt(
+                            missionId = "forecast_uncertainty",
                             wasCorrect = wasCorrect
                         )
                     }
