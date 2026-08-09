@@ -19,13 +19,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -34,6 +33,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.home.HomeScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.CitySelectionScreen
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.CitySettingsViewModel
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.SettingsScreen
 
 private const val CITY_SELECTION_ROUTE = "city_selection"
@@ -50,9 +50,11 @@ enum class ClimateQuestDestination(
 }
 
 @Composable
-fun ClimateQuestApp() {
+fun ClimateQuestApp(
+    citySettingsViewModel: CitySettingsViewModel = viewModel()
+) {
     val navController = rememberNavController()
-    var selectedCity by rememberSaveable { mutableStateOf<String?>(null) }
+    val selectedCity by citySettingsViewModel.selectedCity.collectAsStateWithLifecycle()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -128,7 +130,7 @@ fun ClimateQuestApp() {
                 CitySelectionScreen(
                     selectedCity = selectedCity,
                     onCitySelected = { city ->
-                        selectedCity = city
+                        citySettingsViewModel.selectCity(city)
                         navController.popBackStack()
                     },
                     onNavigateBack = {

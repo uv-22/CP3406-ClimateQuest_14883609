@@ -78,7 +78,7 @@ fun CitySelectionScreen(
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
                 Text(
-                    text = "For now, this is a local session choice. Saving it on your device will be added in a later commit.",
+                    text = "Your city choice is saved only on this device. You can change it any time in Settings.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
