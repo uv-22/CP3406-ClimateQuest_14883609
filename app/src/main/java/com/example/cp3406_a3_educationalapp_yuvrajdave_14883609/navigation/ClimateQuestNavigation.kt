@@ -32,6 +32,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.home.HomeScreen
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.ForecastDetectiveScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.MissionsScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.MissionsViewModel
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.CitySelectionScreen
@@ -39,6 +40,7 @@ import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.SettingsScreen
 
 private const val CITY_SELECTION_ROUTE = "city_selection"
+private const val FORECAST_DETECTIVE_ROUTE = "forecast_detective"
 
 enum class ClimateQuestDestination(
     val route: String,
@@ -67,11 +69,19 @@ fun ClimateQuestApp(
         bottomBar = {
             NavigationBar {
                 ClimateQuestDestination.entries.forEach { destination ->
-                    val isSelected = currentRoute == destination.route ||
-                            (
-                                    destination == ClimateQuestDestination.Settings &&
-                                            currentRoute == CITY_SELECTION_ROUTE
-                                    )
+                    val isSelected = when (destination) {
+                        ClimateQuestDestination.Missions -> {
+                            currentRoute == ClimateQuestDestination.Missions.route ||
+                                    currentRoute == FORECAST_DETECTIVE_ROUTE
+                        }
+
+                        ClimateQuestDestination.Settings -> {
+                            currentRoute == ClimateQuestDestination.Settings.route ||
+                                    currentRoute == CITY_SELECTION_ROUTE
+                        }
+
+                        else -> currentRoute == destination.route
+                    }
 
                     NavigationBarItem(
                         selected = isSelected,
@@ -108,7 +118,22 @@ fun ClimateQuestApp(
             }
 
             composable(ClimateQuestDestination.Missions.route) {
-                MissionsScreen(missions = missions)
+                MissionsScreen(
+                    missions = missions,
+                    onMissionSelected = { missionId ->
+                        if (missionId == "forecast_detective") {
+                            navController.navigate(FORECAST_DETECTIVE_ROUTE)
+                        }
+                    }
+                )
+            }
+
+            composable(FORECAST_DETECTIVE_ROUTE) {
+                ForecastDetectiveScreen(
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
+                )
             }
 
             composable(ClimateQuestDestination.Progress.route) {

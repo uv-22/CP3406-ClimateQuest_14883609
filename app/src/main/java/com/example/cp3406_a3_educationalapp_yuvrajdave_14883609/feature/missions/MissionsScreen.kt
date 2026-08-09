@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +23,7 @@ import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.ui.theme.CP3406_
 @Composable
 fun MissionsScreen(
     missions: List<Mission>,
+    onMissionSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -65,7 +67,8 @@ fun MissionsScreen(
             missions.forEachIndexed { index, mission ->
                 MissionCard(
                     mission = mission,
-                    position = index + 1
+                    position = index + 1,
+                    onMissionSelected = onMissionSelected
                 )
             }
         }
@@ -99,8 +102,11 @@ fun MissionsScreen(
 @Composable
 private fun MissionCard(
     mission: Mission,
-    position: Int
+    position: Int,
+    onMissionSelected: (String) -> Unit
 ) {
+    val isAvailable = mission.id == "forecast_detective"
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -131,6 +137,23 @@ private fun MissionCard(
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.secondary
             )
+
+            if (isAvailable) {
+                Button(
+                    onClick = {
+                        onMissionSelected(mission.id)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Start mission")
+                }
+            } else {
+                Text(
+                    text = "Available soon",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
@@ -155,7 +178,8 @@ private fun MissionsScreenPreview() {
                     skill = "Explaining uncertainty",
                     estimatedMinutes = 5
                 )
-            )
+            ),
+            onMissionSelected = {}
         )
     }
 }
