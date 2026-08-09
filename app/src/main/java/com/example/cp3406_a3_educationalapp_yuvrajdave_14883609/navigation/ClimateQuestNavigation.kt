@@ -35,6 +35,7 @@ import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.home.Hom
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.ForecastDetectiveScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.MissionsScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.missions.MissionsViewModel
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.progress.MissionAttemptsViewModel
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.CitySelectionScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.CitySettingsViewModel
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.SettingsScreen
@@ -56,7 +57,8 @@ enum class ClimateQuestDestination(
 @Composable
 fun ClimateQuestApp(
     citySettingsViewModel: CitySettingsViewModel = viewModel(),
-    missionsViewModel: MissionsViewModel = viewModel()
+    missionsViewModel: MissionsViewModel = viewModel(),
+    missionAttemptsViewModel: MissionAttemptsViewModel = viewModel()
 ) {
     val navController = rememberNavController()
     val selectedCity by citySettingsViewModel.selectedCity.collectAsStateWithLifecycle()
@@ -132,6 +134,12 @@ fun ClimateQuestApp(
                 ForecastDetectiveScreen(
                     onNavigateBack = {
                         navController.popBackStack()
+                    },
+                    onAttemptRecorded = { wasCorrect ->
+                        missionAttemptsViewModel.recordAttempt(
+                            missionId = "forecast_detective",
+                            wasCorrect = wasCorrect
+                        )
                     }
                 )
             }

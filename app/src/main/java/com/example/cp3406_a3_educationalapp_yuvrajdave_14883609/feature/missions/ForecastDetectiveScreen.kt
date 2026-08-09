@@ -33,6 +33,7 @@ private data class PlanOption(
 @Composable
 fun ForecastDetectiveScreen(
     onNavigateBack: () -> Unit,
+    onAttemptRecorded: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val options = listOf(
@@ -128,6 +129,7 @@ fun ForecastDetectiveScreen(
             OutlinedButton(
                 onClick = {
                     selectedOptionId = option.id
+                    onAttemptRecorded(option.isCorrect)
                 },
                 enabled = selectedOption == null,
                 modifier = Modifier.fillMaxWidth()
@@ -179,6 +181,16 @@ fun ForecastDetectiveScreen(
                         }
                     )
 
+                    Text(
+                        text = "Your response is saved only on this device.",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = if (selectedOption.isCorrect) {
+                            MaterialTheme.colorScheme.onPrimaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.onErrorContainer
+                        }
+                    )
+
                     if (!selectedOption.isCorrect) {
                         Button(
                             onClick = {
@@ -199,6 +211,9 @@ fun ForecastDetectiveScreen(
 @Composable
 private fun ForecastDetectiveScreenPreview() {
     CP3406_A3EducationalApp_YuvrajDave_14883609Theme {
-        ForecastDetectiveScreen(onNavigateBack = {})
+        ForecastDetectiveScreen(
+            onNavigateBack = {},
+            onAttemptRecorded = {}
+        )
     }
 }
