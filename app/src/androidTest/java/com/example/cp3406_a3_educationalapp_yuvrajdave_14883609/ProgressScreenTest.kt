@@ -11,6 +11,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.data.progress.MissionAttemptEntity
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.progress.ProgressScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.progress.ProgressUiState
@@ -49,7 +50,7 @@ class ProgressScreenTest {
     }
 
     @Test
-    fun savedProgressShowsStatisticsAndRecentActivity() {
+    fun savedProgressShowsStatisticsAndRealMissionTitles() {
         composeTestRule.setContent {
             CP3406_A3EducationalApp_YuvrajDave_14883609Theme {
                 ProgressScreen(
@@ -57,18 +58,24 @@ class ProgressScreenTest {
                         totalAttempts = 3,
                         correctAttempts = 2,
                         completedMissionIds = setOf(
-                            "forecast_detective",
+                            "forecast_uncertainty",
                             "weather_or_climate"
                         ),
                         recentAttempts = listOf(
                             MissionAttemptEntity(
                                 id = 1,
-                                missionId = "weather_or_climate",
+                                missionId = "forecast_uncertainty",
                                 wasCorrect = true,
                                 completedAtEpochMillis = 0
                             ),
                             MissionAttemptEntity(
                                 id = 2,
+                                missionId = "weather_or_climate",
+                                wasCorrect = true,
+                                completedAtEpochMillis = 0
+                            ),
+                            MissionAttemptEntity(
+                                id = 3,
                                 missionId = "forecast_detective",
                                 wasCorrect = false,
                                 completedAtEpochMillis = 0
@@ -92,7 +99,15 @@ class ProgressScreenTest {
             .assertIsDisplayed()
         composeTestRule.onNodeWithText("Recent activity")
             .assertIsDisplayed()
+
+        composeTestRule.onNodeWithText("Forecasts are not promises")
+            .performScrollTo()
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Weather or climate?")
+            .performScrollTo()
+            .assertIsDisplayed()
         composeTestRule.onNodeWithText("Forecast detective")
+            .performScrollTo()
             .assertIsDisplayed()
     }
 }

@@ -204,6 +204,8 @@ private fun RecentAttemptCard(
 private fun missionTitle(missionId: String): String {
     return when (missionId) {
         "forecast_detective" -> "Forecast detective"
+        "forecast_uncertainty" -> "Forecasts are not promises"
+        "weather_or_climate" -> "Weather or climate?"
         else -> "ClimateQuest mission"
     }
 }
@@ -216,16 +218,25 @@ private fun ProgressScreenPreview() {
             progressUiState = ProgressUiState(
                 totalAttempts = 3,
                 correctAttempts = 2,
-                completedMissionIds = setOf("forecast_detective"),
+                completedMissionIds = setOf(
+                    "forecast_uncertainty",
+                    "weather_or_climate"
+                ),
                 recentAttempts = listOf(
                     MissionAttemptEntity(
                         id = 1,
-                        missionId = "forecast_detective",
+                        missionId = "forecast_uncertainty",
                         wasCorrect = true,
                         completedAtEpochMillis = 0
                     ),
                     MissionAttemptEntity(
                         id = 2,
+                        missionId = "weather_or_climate",
+                        wasCorrect = true,
+                        completedAtEpochMillis = 0
+                    ),
+                    MissionAttemptEntity(
+                        id = 3,
                         missionId = "forecast_detective",
                         wasCorrect = false,
                         completedAtEpochMillis = 0
