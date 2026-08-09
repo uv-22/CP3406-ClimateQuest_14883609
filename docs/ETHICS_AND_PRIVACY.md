@@ -43,7 +43,7 @@ The app stores only the data needed for learning:
 - the selected city name; and
 - local mission responses, correctness, and completion time.
 
-This data stays on the device in DataStore and Room. It is not sent to a ClimateQuest server.
+This data stays on the current device in DataStore and Room. ClimateQuest explicitly excludes its private app data from Android cloud backup and device-to-device transfers. It is not sent to a ClimateQuest server.
 
 ## Learner control
 
@@ -62,7 +62,8 @@ ClimateQuest clearly communicates:
 - that live weather data comes from Open-Meteo;
 - that manual city selection is used instead of GPS;
 - that forecasts are uncertain estimates rather than guarantees;
-- that learning responses stay on the device; and
+- that learning responses stay on the device;
+- that Android cloud backup and device-to-device transfers are disabled for learner data; and
 - how learners can remove their saved city and local learning data.
 
 ## Fair and understandable learning feedback

@@ -30,6 +30,7 @@ Students will be able to:
 - Manual city selection only
 - Live conditions are retrieved from Open-Meteo using fixed coordinates for the chosen city
 - Selected city and learning progress are stored locally on the device
+- Local learner data is excluded from Android cloud backup and device-to-device transfers
 - Learners can remove their saved city and clear local learning data
 - The app is educational and not emergency or safety advice
 
