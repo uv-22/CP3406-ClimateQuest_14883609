@@ -33,7 +33,7 @@ Students will be able to:
 - Learners can remove their saved city and clear local learning data
 - The app is educational and not emergency or safety advice
 
-See [Ethics and Privacy Design](docs/ETHICS_AND_PRIVACY.md) for details.
+See [Ethics and Privacy Design](docs/ETHICS_AND_PRIVACY.md) and the [Gibbs self-reflection](docs/SELF_REFLECTION.md) for details.
 
 ## Technology
 
@@ -54,10 +54,9 @@ See [Ethics and Privacy Design](docs/ETHICS_AND_PRIVACY.md) for details.
 - [x] Learner-focused Home and Settings screens
 - [x] Manual city selection with DataStore persistence
 - [x] Saved-city removal and local learning-data controls
-- [x] Local mission catalogue and Forecast detective learning mission
-- [x] Evidence-based feedback and uncertainty explanation
+- [x] Three playable learning missions with evidence-based feedback
 - [x] Room persistence for mission attempts and Progress statistics
 - [x] Live city weather evidence from Open-Meteo
-- [x] Compose UI tests for Settings city controls
-- [ ] Additional mission activities and expanded progress insights
-- [ ] Final accessibility polish, self-reflection, and release review
+- [x] Compose UI tests for Settings and Progress controls
+- [x] Host-side unit test for the local mission catalogue
+- [x] Gibbs Reflective Cycle self-reflection
