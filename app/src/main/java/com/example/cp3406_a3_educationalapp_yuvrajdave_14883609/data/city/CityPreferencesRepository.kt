@@ -6,4 +6,6 @@ interface CityPreferencesRepository {
     val selectedCity: Flow<String?>
 
     suspend fun saveSelectedCity(city: String)
+
+    suspend fun clearSelectedCity()
 }

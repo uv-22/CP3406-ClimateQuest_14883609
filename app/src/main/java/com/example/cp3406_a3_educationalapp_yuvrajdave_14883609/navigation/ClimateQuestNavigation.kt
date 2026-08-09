@@ -122,7 +122,8 @@ fun ClimateQuestApp(
                     selectedCity = selectedCity,
                     onChooseCity = {
                         navController.navigate(CITY_SELECTION_ROUTE)
-                    }
+                    },
+                    onClearCity = citySettingsViewModel::clearSelectedCity
                 )
             }
 

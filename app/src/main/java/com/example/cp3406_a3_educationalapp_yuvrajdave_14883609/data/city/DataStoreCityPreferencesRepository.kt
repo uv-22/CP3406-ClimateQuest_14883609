@@ -42,6 +42,12 @@ class DataStoreCityPreferencesRepository @Inject constructor(
         }
     }
 
+    override suspend fun clearSelectedCity() {
+        context.cityPreferencesDataStore.edit { preferences ->
+            preferences.remove(SELECTED_CITY)
+        }
+    }
+
     private companion object {
         val SELECTED_CITY = stringPreferencesKey("selected_city")
     }

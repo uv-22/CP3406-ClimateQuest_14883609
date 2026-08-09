@@ -27,4 +27,9 @@ class CitySettingsViewModel @Inject constructor(
             cityPreferencesRepository.saveSelectedCity(city)
         }
     }
+    fun clearSelectedCity() {
+        viewModelScope.launch {
+            cityPreferencesRepository.clearSelectedCity()
+        }
+    }
 }

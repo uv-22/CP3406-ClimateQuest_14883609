@@ -14,13 +14,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Tune
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -33,8 +40,12 @@ import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.ui.theme.CP3406_
 fun SettingsScreen(
     selectedCity: String?,
     onChooseCity: () -> Unit,
+    onClearCity: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var showRemoveCityDialog by rememberSaveable { mutableStateOf(false) }
+    val cityToRemove = selectedCity
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -131,6 +142,17 @@ fun SettingsScreen(
                         }
                     )
                 }
+
+                if (selectedCity != null) {
+                    OutlinedButton(
+                        onClick = { showRemoveCityDialog = true },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("remove_city_button")
+                    ) {
+                        Text("Remove saved city")
+                    }
+                }
             }
         }
 
@@ -176,6 +198,37 @@ fun SettingsScreen(
                 )
             }
         }
+    }
+
+    if (showRemoveCityDialog && cityToRemove != null) {
+        AlertDialog(
+            onDismissRequest = { showRemoveCityDialog = false },
+            title = {
+                Text("Remove saved city?")
+            },
+            text = {
+                Text(
+                    "$cityToRemove will be removed from this device. You can choose it again later."
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onClearCity()
+                        showRemoveCityDialog = false
+                    }
+                ) {
+                    Text("Remove city")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showRemoveCityDialog = false }
+                ) {
+                    Text("Keep city")
+                }
+            }
+        )
     }
 }
 
@@ -233,8 +286,9 @@ private fun LearnerControlCard(
 private fun SettingsScreenPreview() {
     CP3406_A3EducationalApp_YuvrajDave_14883609Theme {
         SettingsScreen(
-            selectedCity = null,
-            onChooseCity = {}
+            selectedCity = "Townsville",
+            onChooseCity = {},
+            onClearCity = {}
         )
     }
 }
