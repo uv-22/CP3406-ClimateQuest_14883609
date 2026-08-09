@@ -1,10 +1,10 @@
 # ClimateQuest
 
-ClimateQuest is a privacy-first Android education app for Years 7–9 students. It develops learners’ ability to interpret weather forecasts, communicate uncertainty, and distinguish short-term weather evidence from longer-term climate context.
+ClimateQuest is a privacy-first Android education app for Years 7-9 students. It develops learners' ability to interpret weather forecasts, communicate uncertainty, and distinguish short-term weather evidence from longer-term climate context.
 
 ## Target learners
 
-Students aged approximately 12–15 (Years 7–9).
+Students aged approximately 12-15 (Years 7-9).
 
 ## Learning outcomes
 
@@ -18,27 +18,46 @@ Students will be able to:
 ## Core learning loop
 
 1. A learner manually selects a city.
-2. ClimateQuest presents clearly labelled weather evidence.
-3. The learner answers a scenario-based question.
-4. The app gives evidence-based feedback.
-5. Local progress helps guide the next learning activity.
+2. ClimateQuest displays a scenario forecast and optional live city conditions.
+3. The learner answers a weather-evidence question.
+4. The app gives feedback explaining uncertainty and evidence.
+5. The learner's responses are saved locally and shown in Progress.
 
-## Ethical design commitments
+## Privacy and ethical design
 
-- Manual city selection; no GPS permission by default
+- No GPS permission or precise device-location tracking
 - No account, advertising, analytics, or background tracking
-- Clear data source, forecast time, and uncertainty language
-- Accessible text, icons, contrast, and touch targets
-- Local learner data will be controllable and erasable
+- Manual city selection only
+- Live conditions are retrieved from Open-Meteo using fixed coordinates for the chosen city
+- Selected city and learning progress are stored locally on the device
+- Learners can remove their saved city and clear local learning data
 - The app is educational and not emergency or safety advice
 
-## Planned technology
+See [Ethics and Privacy Design](docs/ETHICS_AND_PRIVACY.md) for details.
 
-Kotlin, Jetpack Compose, Material 3, Navigation, ViewModels, Hilt, Open-Meteo, Room, DataStore, and automated tests.
+## Technology
+
+- Kotlin
+- Jetpack Compose and Material 3
+- Navigation Compose
+- ViewModels and Hilt dependency injection
+- DataStore for the selected city
+- Room for local mission attempts and progress statistics
+- Open-Meteo Forecast API for live city conditions
+- Compose UI tests and Gradle verification
 
 ## Development status
 
 - [x] Android project bootstrapped and tested on Pixel 9
-- [x] ClimateQuest project identity established
-- [ ] Visual design system and landing screen
-- [ ] Learning mission, weather API, persistence, statistics, and tests
+- [x] ClimateQuest visual identity, colour system, and accessible typography
+- [x] Four-tab Navigation Compose shell
+- [x] Learner-focused Home and Settings screens
+- [x] Manual city selection with DataStore persistence
+- [x] Saved-city removal and local learning-data controls
+- [x] Local mission catalogue and Forecast detective learning mission
+- [x] Evidence-based feedback and uncertainty explanation
+- [x] Room persistence for mission attempts and Progress statistics
+- [x] Live city weather evidence from Open-Meteo
+- [x] Compose UI tests for Settings city controls
+- [ ] Additional mission activities and expanded progress insights
+- [ ] Final accessibility polish, self-reflection, and release review

@@ -2,26 +2,35 @@
 
 ## Purpose
 
-ClimateQuest helps Years 7–9 learners interpret weather evidence, understand forecast uncertainty, 
-and distinguish weather from climate. It is an educational tool, not emergency or safety advice.
+ClimateQuest helps Years 7-9 learners interpret weather evidence, understand forecast uncertainty, and distinguish weather from climate. It is an educational tool, not emergency or safety advice.
 
 ## Learner group
 
-The primary learners are students aged approximately 12–15. The app should support independent 
-learning without collecting unnecessary personal information.
+The primary learners are students aged approximately 12-15. The app supports independent learning without collecting unnecessary personal information.
 
 ## Privacy-first location design
 
-ClimateQuest will use manual city search and selection.
+ClimateQuest uses manual city selection.
 
-- The app will not request GPS or precise location permission.
-- A learner can change or remove a saved city at any time.
-- The app will not collect raw coordinates for tracking purposes.
-- No background location access will be used.
+- The app does not request GPS, precise location, or background-location permission.
+- A learner may choose, change, or remove a saved city at any time.
+- The app stores only the selected city name locally.
+- Fixed coordinates for supported cities are built into the app solely to request weather information.
+- The app does not store raw device coordinates or use location for tracking.
+
+## Live weather data
+
+ClimateQuest retrieves optional live city conditions from the Open-Meteo Forecast API.
+
+- Requests use the fixed coordinates for the city selected by the learner.
+- The app does not add an account identifier, advertising identifier, or GPS location to the request.
+- Open-Meteo data is shown as model-based weather information, not a guarantee.
+- If the service or connection is unavailable, the app clearly shows an error state and keeps the learning mission usable.
+- The mission's scenario forecast remains clearly labelled as learning evidence, separate from live conditions.
 
 ## Data minimisation
 
-ClimateQuest will not require:
+ClimateQuest does not require:
 
 - an account or profile;
 - advertising identifiers;
@@ -29,41 +38,47 @@ ClimateQuest will not require:
 - social-media login; or
 - background data collection.
 
-Only data needed for learning progress and selected cities will be stored locally on the device.
+The app stores only the data needed for learning:
+
+- the selected city name; and
+- local mission responses, correctness, and completion time.
+
+This data stays on the device in DataStore and Room. It is not sent to a ClimateQuest server.
+
+## Learner control
+
+The Settings screen provides controls to:
+
+- choose, change, or remove the saved city;
+- clear all local mission responses and Progress statistics; and
+- understand which learning preferences are optional or planned.
+
+Clearing learning data permanently removes the saved Room mission attempts from the device. It does not remove the separately saved city choice.
 
 ## Transparency
 
-The app will clearly communicate:
+ClimateQuest clearly communicates:
 
-- that weather data is retrieved from Open-Meteo;
-- when forecast information was retrieved;
-- that forecasts are uncertain estimates rather than guarantees; and
-- how learners can remove locally stored data.
+- that live weather data comes from Open-Meteo;
+- that manual city selection is used instead of GPS;
+- that forecasts are uncertain estimates rather than guarantees;
+- that learning responses stay on the device; and
+- how learners can remove their saved city and local learning data.
 
 ## Fair and understandable learning feedback
 
-Learning feedback will explain the weather evidence behind an answer. The app will avoid shame , 
-streak pressure, manipulative notifications, and misleading certainty.
+Learning feedback explains the evidence behind an answer. ClimateQuest avoids shame, streak pressure, manipulative notifications, and misleading certainty.
 
 ## Accessibility and inclusion
 
-ClimateQuest will support diverse learners through:
+ClimateQuest supports diverse learners through:
 
-- readable text with scalable font sizes;
+- readable text with scalable typography;
 - clear icons paired with text labels;
 - colour choices that do not communicate meaning by colour alone;
 - sufficient contrast and touch-target sizes; and
 - meaningful labels for screen readers.
 
-## Learner control
-
-The Settings screen will provide controls to:
-
-- select, change, or remove saved cities;
-- adjust optional learning preferences; and
-- delete local learner data.
-
 ## Ethical foundation
 
-This approach continues the ethical principles explored in Assessment 2: respect for user choice, 
-transparency, accessibility, privacy by design, and trustworthy digital systems.
+The design applies privacy by design, learner choice, accessibility, transparency, and trustworthy digital-system principles.
