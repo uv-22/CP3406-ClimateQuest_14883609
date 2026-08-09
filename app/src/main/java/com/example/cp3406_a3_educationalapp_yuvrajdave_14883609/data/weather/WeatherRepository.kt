@@ -18,7 +18,9 @@ class OpenMeteoWeatherRepository @Inject constructor() : WeatherRepository {
 
     override suspend fun fetchWeather(city: String): WeatherSnapshot {
         val coordinates = cityCoordinates(city)
-            ?: throw IllegalArgumentException("ClimateQuest does not have weather coordinates for $city.")
+            ?: throw IllegalArgumentException(
+                "ClimateQuest does not have weather coordinates for $city."
+            )
 
         return withContext(Dispatchers.IO) {
             val requestUrl =
@@ -26,8 +28,9 @@ class OpenMeteoWeatherRepository @Inject constructor() : WeatherRepository {
                         "?latitude=${coordinates.latitude}" +
                         "&longitude=${coordinates.longitude}" +
                         "&current=temperature_2m,wind_speed_10m" +
-                        "&hourly=precipitation_probability" +
+                        "&daily=precipitation_probability_max" +
                         "&forecast_days=1" +
+                        "&timezone=auto" +
                         "&wind_speed_unit=kmh"
 
             val connection = URL(requestUrl).openConnection() as HttpURLConnection
@@ -49,14 +52,19 @@ class OpenMeteoWeatherRepository @Inject constructor() : WeatherRepository {
 
                 val weatherJson = JSONObject(response)
                 val current = weatherJson.getJSONObject("current")
-                val hourly = weatherJson.optJSONObject("hourly")
-                val probabilities = hourly?.optJSONArray("precipitation_probability")
+                val daily = weatherJson.optJSONObject("daily")
+                val maximumRainProbabilities =
+                    daily?.optJSONArray("precipitation_probability_max")
 
                 WeatherSnapshot(
                     city = city,
                     temperatureCelsius = current.getDouble("temperature_2m"),
                     windSpeedKilometresPerHour = current.getDouble("wind_speed_10m"),
-                    precipitationProbability = probabilities?.optInt(0)
+                    maximumRainProbabilityToday = maximumRainProbabilities
+                        ?.takeIf { probabilities ->
+                            probabilities.length() > 0 && !probabilities.isNull(0)
+                        }
+                        ?.optInt(0)
                 )
             } finally {
                 connection.disconnect()

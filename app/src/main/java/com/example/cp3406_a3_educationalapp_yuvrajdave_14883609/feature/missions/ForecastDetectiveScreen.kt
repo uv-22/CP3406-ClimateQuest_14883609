@@ -275,16 +275,16 @@ private fun LiveWeatherCard(
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
 
-                    snapshot.precipitationProbability?.let { probability ->
+                    snapshot.maximumRainProbabilityToday?.let { probability ->
                         Text(
-                            text = "Rain chance in the forecast: $probability%",
+                            text = "Highest chance of rain today: $probability%",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSecondaryContainer
                         )
                     }
 
                     Text(
-                        text = "Source: Open-Meteo forecast model data. Conditions can change.",
+                        text = "Source: Open-Meteo forecast model data. The rain value is the highest chance for today; conditions can change.",
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )

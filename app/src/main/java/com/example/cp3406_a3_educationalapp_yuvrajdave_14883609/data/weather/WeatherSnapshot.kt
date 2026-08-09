@@ -4,5 +4,5 @@ data class WeatherSnapshot(
     val city: String,
     val temperatureCelsius: Double,
     val windSpeedKilometresPerHour: Double,
-    val precipitationProbability: Int?
+    val maximumRainProbabilityToday: Int?
 )
