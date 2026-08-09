@@ -7,7 +7,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 
 interface WeatherRepository {
     suspend fun fetchWeather(city: String): WeatherSnapshot
@@ -50,21 +49,9 @@ class OpenMeteoWeatherRepository @Inject constructor() : WeatherRepository {
                     .bufferedReader()
                     .use { reader -> reader.readText() }
 
-                val weatherJson = JSONObject(response)
-                val current = weatherJson.getJSONObject("current")
-                val daily = weatherJson.optJSONObject("daily")
-                val maximumRainProbabilities =
-                    daily?.optJSONArray("precipitation_probability_max")
-
-                WeatherSnapshot(
+                WeatherResponseParser.parse(
                     city = city,
-                    temperatureCelsius = current.getDouble("temperature_2m"),
-                    windSpeedKilometresPerHour = current.getDouble("wind_speed_10m"),
-                    maximumRainProbabilityToday = maximumRainProbabilities
-                        ?.takeIf { probabilities ->
-                            probabilities.length() > 0 && !probabilities.isNull(0)
-                        }
-                        ?.optInt(0)
+                    response = response
                 )
             } finally {
                 connection.disconnect()
