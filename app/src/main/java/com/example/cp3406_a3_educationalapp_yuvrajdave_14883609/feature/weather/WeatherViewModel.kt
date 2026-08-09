@@ -7,10 +7,12 @@ import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.data.weather.Wea
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.data.weather.WeatherSnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 sealed interface WeatherUiState {
@@ -34,13 +36,16 @@ class WeatherViewModel @Inject constructor(
         _weatherUiState.asStateFlow()
 
     private var selectedCity: String? = null
+    private var weatherLoadJob: Job? = null
+    private var weatherRequestVersion = 0
 
     init {
         viewModelScope.launch {
-            cityPreferencesRepository.selectedCity.collectLatest { city ->
+            cityPreferencesRepository.selectedCity.collect { city ->
                 selectedCity = city
 
                 if (city == null) {
+                    cancelWeatherLoad()
                     _weatherUiState.value = WeatherUiState.NoCityChosen
                 } else {
                     loadWeather(city)
@@ -56,16 +61,40 @@ class WeatherViewModel @Inject constructor(
     }
 
     private fun loadWeather(city: String) {
-        viewModelScope.launch {
+        val requestVersion = ++weatherRequestVersion
+
+        weatherLoadJob?.cancel()
+        weatherLoadJob = viewModelScope.launch {
+            if (selectedCity != city || requestVersion != weatherRequestVersion) {
+                return@launch
+            }
+
             _weatherUiState.value = WeatherUiState.Loading(city)
 
-            _weatherUiState.value = try {
-                WeatherUiState.Success(
-                    weatherSnapshot = weatherRepository.fetchWeather(city)
-                )
+            try {
+                val weatherSnapshot = weatherRepository.fetchWeather(city)
+
+                if (selectedCity == city && requestVersion == weatherRequestVersion) {
+                    _weatherUiState.value = WeatherUiState.Success(weatherSnapshot)
+                }
+            } catch (exception: CancellationException) {
+                throw exception
             } catch (_: Exception) {
-                WeatherUiState.Error(city)
+                if (selectedCity == city && requestVersion == weatherRequestVersion) {
+                    _weatherUiState.value = WeatherUiState.Error(city)
+                }
             }
         }
+    }
+
+    private fun cancelWeatherLoad() {
+        weatherRequestVersion += 1
+        weatherLoadJob?.cancel()
+        weatherLoadJob = null
+    }
+
+    override fun onCleared() {
+        cancelWeatherLoad()
+        super.onCleared()
     }
 }
