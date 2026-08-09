@@ -40,6 +40,7 @@ import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.progress
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.CitySelectionScreen
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.CitySettingsViewModel
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.settings.SettingsScreen
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.weather.WeatherViewModel
 
 private const val CITY_SELECTION_ROUTE = "city_selection"
 private const val FORECAST_DETECTIVE_ROUTE = "forecast_detective"
@@ -59,12 +60,14 @@ enum class ClimateQuestDestination(
 fun ClimateQuestApp(
     citySettingsViewModel: CitySettingsViewModel = viewModel(),
     missionsViewModel: MissionsViewModel = viewModel(),
-    missionAttemptsViewModel: MissionAttemptsViewModel = viewModel()
+    missionAttemptsViewModel: MissionAttemptsViewModel = viewModel(),
+    weatherViewModel: WeatherViewModel = viewModel()
 ) {
     val navController = rememberNavController()
     val selectedCity by citySettingsViewModel.selectedCity.collectAsStateWithLifecycle()
     val missions by missionsViewModel.missions.collectAsStateWithLifecycle()
     val progressUiState by missionAttemptsViewModel.progressUiState.collectAsStateWithLifecycle()
+    val weatherUiState by weatherViewModel.weatherUiState.collectAsStateWithLifecycle()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -134,6 +137,8 @@ fun ClimateQuestApp(
 
             composable(FORECAST_DETECTIVE_ROUTE) {
                 ForecastDetectiveScreen(
+                    weatherUiState = weatherUiState,
+                    onRefreshWeather = weatherViewModel::refreshWeather,
                     onNavigateBack = {
                         navController.popBackStack()
                     },

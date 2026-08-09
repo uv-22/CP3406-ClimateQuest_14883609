@@ -22,7 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.feature.weather.WeatherUiState
 import com.example.cp3406_a3_educationalapp_yuvrajdave_14883609.ui.theme.CP3406_A3EducationalApp_YuvrajDave_14883609Theme
+import kotlin.math.roundToInt
 
 private data class PlanOption(
     val id: String,
@@ -32,6 +34,8 @@ private data class PlanOption(
 
 @Composable
 fun ForecastDetectiveScreen(
+    weatherUiState: WeatherUiState,
+    onRefreshWeather: () -> Unit,
     onNavigateBack: () -> Unit,
     onAttemptRecorded: (Boolean) -> Unit,
     modifier: Modifier = Modifier
@@ -80,8 +84,13 @@ fun ForecastDetectiveScreen(
         )
 
         Text(
-            text = "You want to plan a Saturday afternoon at the park. Use the forecast as evidence to choose a sensible plan.",
+            text = "Use the mission forecast as evidence, then compare it with live conditions for the city you chose manually.",
             style = MaterialTheme.typography.bodyLarge
+        )
+
+        LiveWeatherCard(
+            weatherUiState = weatherUiState,
+            onRefreshWeather = onRefreshWeather
         )
 
         Card(
@@ -95,7 +104,7 @@ fun ForecastDetectiveScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "Forecast evidence",
+                    text = "Mission forecast evidence",
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
@@ -121,7 +130,7 @@ fun ForecastDetectiveScreen(
         }
 
         Text(
-            text = "Which plan uses the forecast evidence best?",
+            text = "Which plan uses the mission forecast evidence best?",
             style = MaterialTheme.typography.titleLarge
         )
 
@@ -207,11 +216,107 @@ fun ForecastDetectiveScreen(
     }
 }
 
-@Preview(showBackground = true, heightDp = 1000)
+@Composable
+private fun LiveWeatherCard(
+    weatherUiState: WeatherUiState,
+    onRefreshWeather: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "Live city conditions",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+
+            when (weatherUiState) {
+                WeatherUiState.NoCityChosen -> {
+                    Text(
+                        text = "Choose a city in Settings to view live conditions. ClimateQuest does not use GPS.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+
+                is WeatherUiState.Loading -> {
+                    Text(
+                        text = "Loading current conditions for ${weatherUiState.city}...",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+
+                is WeatherUiState.Success -> {
+                    val snapshot = weatherUiState.weatherSnapshot
+
+                    Text(
+                        text = "Current conditions for ${snapshot.city}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+
+                    Text(
+                        text = "Temperature: ${snapshot.temperatureCelsius.roundToInt()}°C",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+
+                    Text(
+                        text = "Wind: ${snapshot.windSpeedKilometresPerHour.roundToInt()} km/h",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+
+                    snapshot.precipitationProbability?.let { probability ->
+                        Text(
+                            text = "Rain chance in the forecast: $probability%",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    }
+
+                    Text(
+                        text = "Source: Open-Meteo forecast model data. Conditions can change.",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+
+                    TextButton(onClick = onRefreshWeather) {
+                        Text("Refresh conditions")
+                    }
+                }
+
+                is WeatherUiState.Error -> {
+                    Text(
+                        text = "Live conditions for ${weatherUiState.city} could not load. Check your connection and try again.",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+
+                    TextButton(onClick = onRefreshWeather) {
+                        Text("Try again")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, heightDp = 1100)
 @Composable
 private fun ForecastDetectiveScreenPreview() {
     CP3406_A3EducationalApp_YuvrajDave_14883609Theme {
         ForecastDetectiveScreen(
+            weatherUiState = WeatherUiState.NoCityChosen,
+            onRefreshWeather = {},
             onNavigateBack = {},
             onAttemptRecorded = {}
         )
