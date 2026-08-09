@@ -2,6 +2,7 @@ package com.example.cp3406_a3_educationalapp_yuvrajdave_14883609
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +48,7 @@ class SettingsCityControlsTest {
     fun setUp() {
         composeTestRule.setContent {
             var selectedCity by remember { mutableStateOf<String?>(null) }
+            var progressCleared by remember { mutableStateOf(false) }
 
             CP3406_A3EducationalApp_YuvrajDave_14883609Theme {
                 SettingsScreen(
@@ -56,8 +58,15 @@ class SettingsCityControlsTest {
                     },
                     onClearCity = {
                         selectedCity = null
+                    },
+                    onClearProgress = {
+                        progressCleared = true
                     }
                 )
+
+                if (progressCleared) {
+                    Text("Progress cleared for test")
+                }
             }
         }
     }
@@ -94,6 +103,20 @@ class SettingsCityControlsTest {
         composeTestRule.onNodeWithText("No city chosen yet")
             .assertIsDisplayed()
         composeTestRule.onNodeWithText("Choose a city")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun confirmingClearLearningDataTriggersTheCallback() {
+        composeTestRule.onNodeWithTag("clear_progress_button")
+            .performScrollTo()
+            .performClick()
+
+        composeTestRule.onNodeWithText("Clear local learning data?")
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Clear data").performClick()
+
+        composeTestRule.onNodeWithText("Progress cleared for test")
             .assertIsDisplayed()
     }
 }
